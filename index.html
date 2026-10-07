@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- GOOGLE_ADS_INICIO -->
+<script>
+  // Google Ads — conversão "Clique WhatsApp LP" (campanhas Pesquisa Local). Vazio = não carrega.
+  window.GOODBE_ADS = { id: "", labelWhatsApp: "" };
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  if (window.GOODBE_ADS.id) {
+    var _g = document.createElement('script'); _g.async = true;
+    _g.src = 'https://www.googletagmanager.com/gtag/js?id=' + window.GOODBE_ADS.id;
+    document.head.appendChild(_g);
+    gtag('js', new Date());
+    gtag('config', window.GOODBE_ADS.id, { allow_enhanced_conversions: true });
+  }
+</script>
+<!-- GOOGLE_ADS_FIM -->
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>GoodBe Saúde — Estúdio de bem-estar em Mirandópolis</title>
@@ -448,6 +463,19 @@
     el.target = '_blank'; el.rel = 'noopener';
   });
   document.getElementById('ano').textContent = new Date().getFullYear();
+
+  // Google Ads: cada clique em botão de WhatsApp conta como conversão (e vai para o dataLayer, para GTM/GA4)
+  document.querySelectorAll('[data-wa]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var ads = window.GOODBE_ADS || {};
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: 'whatsapp_click', cta: (el.textContent || '').trim().slice(0, 60), msg: el.getAttribute('data-msg') || '' });
+      if (ads.id && ads.labelWhatsApp && typeof gtag === 'function') {
+        gtag('event', 'conversion', { send_to: ads.id + '/' + ads.labelWhatsApp, value: 1.0, currency: 'BRL' });
+      }
+    });
+  });
+
 
   // header solidify
   var hdr = document.getElementById('hdr');
