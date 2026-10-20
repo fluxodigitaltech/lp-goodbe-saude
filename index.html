@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="img/hero.webp">
+<link rel="preload" as="image" href="video/tour-saude.jpg">
 <script>
   // Google Ads: conversão "Clique WhatsApp LP" da loja. Vazio = não carrega.
   window.GOODBE_ADS = { id: "", labelWhatsApp: "" };
@@ -66,6 +66,11 @@ header.site .wrap{display:flex;align-items:center;justify-content:space-between;
 .hero .micro b{color:var(--ink)}
 .foto-hero{position:relative;border-radius:30px;overflow:hidden;aspect-ratio:4/5;background:var(--band)}
 .foto-hero img{width:100%;height:100%;object-fit:cover}
+.foto-hero.tour{aspect-ratio:9/16;height:min(80svh,720px);width:auto;max-width:100%;margin-left:auto;background:#0b2618}
+.foto-hero video{width:100%;height:100%;object-fit:cover;display:block}
+.foto-hero .som{position:absolute;right:16px;bottom:16px;border:0;cursor:pointer;display:flex;align-items:center;gap:8px;background:var(--lime);color:var(--ink);font:700 .86rem/1 inherit;font-family:inherit;padding:11px 16px 11px 12px;border-radius:999px;box-shadow:0 6px 24px rgba(0,0,0,.22)}
+.foto-hero .som i{width:0;height:0;border-left:11px solid var(--ink);border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:4px}
+.foto-hero .som[aria-pressed="true"] i{border:0;width:11px;height:12px;border-left:4px solid var(--ink);border-right:4px solid var(--ink);margin-left:0}
 .foto-hero .rot{position:absolute;left:16px;bottom:16px;background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:700;padding:8px 12px;border-radius:12px}
 .semis{position:absolute;right:-10px;top:-10px;width:150px;height:auto;z-index:2}
 
@@ -160,7 +165,11 @@ footer img{height:26px;width:auto}
 @media (max-width:860px){
   section{padding-block:48px}
   .hero .wrap,.unidade .wrap,.one{grid-template-columns:1fr}
-  .foto-hero{aspect-ratio:4/3;order:-1}
+  .foto-hero{aspect-ratio:4/5;max-height:64svh;width:100%;order:-1}
+  .foto-hero.tour{aspect-ratio:auto;height:54svh;width:100%;margin:0}
+  .foto-hero.tour video{object-fit:contain}
+  .foto-hero .rot{top:14px;bottom:auto;left:14px}
+  .foto-hero .som{right:14px;bottom:14px}
   .hero .wrap > div:first-child{order:2}
   .prova ul{grid-template-columns:1fr 1fr}
   .jeito .grid,.vids,.passos{grid-template-columns:1fr}
@@ -200,7 +209,7 @@ footer img{height:26px;width:auto}
   </div>
   <div style="position:relative">
     <svg class="semis" aria-hidden="true"><use href="#semis"/></svg>
-    <div class="foto-hero"><img src="img/hero.webp" alt="Espaço da Goodbe Saúde" width="1200" height="1500" fetchpriority="high"><span class="rot">Goodbe Saúde</span></div>
+    <div class="foto-hero tour" data-nome="tour-saude"><video autoplay muted loop playsinline preload="auto" poster="video/tour-saude.jpg" src="video/tour-saude.mp4" aria-label="Tour em vídeo pela Goodbe Saúde"></video><span class="rot">Tour pela Goodbe Saúde</span><button type="button" class="som" aria-pressed="false"><i aria-hidden="true"></i><span>Ver com som</span></button></div>
   </div>
 </div></section>
 
@@ -258,9 +267,9 @@ footer img{height:26px;width:auto}
   <div class="eyebrow">Quem treina, conta</div>
   <h2>Veja o que muda na rotina de quem já faz parte.</h2>
   <div class="vids">
+    <figure><div class="vid" data-nome="depoimento3"><video preload="none" playsinline poster="video/depoimento3.jpg" src="video/depoimento3.mp4"></video><button type="button" aria-label="Assistir: “Eu tinha preconceito com o pilates”"><i></i></button></div><figcaption>“Eu tinha preconceito com o pilates”<small>Aluna da unidade Campestre</small></figcaption></figure>
     <figure><div class="vid" data-nome="depoimento2"><video preload="none" playsinline poster="video/depoimento2.jpg" src="video/depoimento2.mp4"></video><button type="button" aria-label="Assistir: “Será que homem pode fazer pilates?”"><i></i></button></div><figcaption>“Será que homem pode fazer pilates?”<small>Depoimento de aluno</small></figcaption></figure>
     <figure><div class="vid" data-nome="depoimento1"><video preload="none" playsinline poster="video/depoimento1.jpg" src="video/depoimento1.mp4"></video><button type="button" aria-label="Assistir: Mat Pilates e Funcional na rotina"><i></i></button></div><figcaption>Mat Pilates e Funcional na rotina<small>Depoimento de aluno</small></figcaption></figure>
-    <figure><div class="vid" data-nome="tour-saude"><video preload="none" playsinline poster="video/tour-saude.jpg" src="video/tour-saude.mp4"></video><button type="button" aria-label="Assistir: Conheça o espaço"><i></i></button></div><figcaption>Conheça o espaço<small>Tour pela Goodbe Saúde</small></figcaption></figure>
   </div>
 </div></section>
 
@@ -336,11 +345,25 @@ footer img{height:26px;width:auto}
     });
   });
   document.querySelectorAll("[data-ev]").forEach(function (a) { a.addEventListener("click", function () { dl.push({ event: "lp_clique", lp_acao: a.dataset.ev, unidade: UNIDADE }); }); });
+  // tour da unidade no topo: roda mudo em loop; o botão liga o som e recomeça do início
+  var tour = document.querySelector(".tour");
+  if (tour) {
+    var tv = tour.querySelector("video"), tb = tour.querySelector(".som");
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { tv.removeAttribute("autoplay"); tv.pause(); }
+    tb.addEventListener("click", function () {
+      var ligar = tv.muted || tv.paused;
+      document.querySelectorAll(".vid video").forEach(function (o) { o.pause(); });
+      if (ligar) { tv.muted = false; tv.currentTime = 0; tv.play(); tb.querySelector("span").textContent = "Pausar"; tb.setAttribute("aria-pressed", "true");
+        dl.push({ event: "video_play", video: tour.dataset.nome, unidade: UNIDADE }); }
+      else { tv.pause(); tb.querySelector("span").textContent = "Ver com som"; tb.setAttribute("aria-pressed", "false"); }
+    });
+  }
   // vídeos: só carregam quando a pessoa aperta o play
   document.querySelectorAll(".vid").forEach(function (v) {
     var b = v.querySelector("button"), video = v.querySelector("video");
     b.addEventListener("click", function () {
       document.querySelectorAll(".vid video").forEach(function (o) { if (o !== video) o.pause(); });
+      if (tour) { var t = tour.querySelector("video"); t.muted = true; tour.querySelector(".som span").textContent = "Ver com som"; tour.querySelector(".som").setAttribute("aria-pressed", "false"); }
       v.classList.add("tocando"); video.controls = true; video.play();
       dl.push({ event: "video_play", video: v.dataset.nome, unidade: UNIDADE });
     });
